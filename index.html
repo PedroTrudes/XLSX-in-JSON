@@ -7,6 +7,7 @@
 <body>
   <h1>Converter Excel para JSON</h1>
   <input type="file" id="input-excel" />
+  <button id="copy-btn">Copiar JSON</button>
   <pre id="output-json"></pre>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
@@ -19,18 +20,30 @@
         const data = new Uint8Array(reader.result);
         const workbook = XLSX.read(data, { type: 'array' });
 
-        // Supomos que queremos a primeira planilha
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
-
-        // Converter planilha para JSON
         const jsonOutput = XLSX.utils.sheet_to_json(worksheet);
 
-        // Exibir JSON na página
         document.getElementById('output-json').textContent = JSON.stringify(jsonOutput, null, 2);
       };
 
       reader.readAsArrayBuffer(input.files[0]);
+    });
+
+
+    document.getElementById('copy-btn').addEventListener('click', function () {
+      const outputElement = document.getElementById('output-json');
+      const textToCopy = outputElement.textContent;
+
+      const tempTextArea = document.createElement('textarea');
+      tempTextArea.value = textToCopy;
+      document.body.appendChild(tempTextArea);
+
+      tempTextArea.select();
+      document.execCommand('copy');
+
+      document.body.removeChild(tempTextArea);
+      alert('JSON copiado para a área de transferência!');
     });
   </script>
 </body>
