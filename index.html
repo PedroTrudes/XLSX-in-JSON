@@ -1,0 +1,37 @@
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leitura Excel para JSON</title>
+</head>
+<body>
+  <h1>Converter Excel para JSON</h1>
+  <input type="file" id="input-excel" />
+  <pre id="output-json"></pre>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+  <script>
+    document.getElementById('input-excel').addEventListener('change', function (event) {
+      const input = event.target;
+      const reader = new FileReader();
+
+      reader.onload = function () {
+        const data = new Uint8Array(reader.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        // Supomos que queremos a primeira planilha
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+
+        // Converter planilha para JSON
+        const jsonOutput = XLSX.utils.sheet_to_json(worksheet);
+
+        // Exibir JSON na página
+        document.getElementById('output-json').textContent = JSON.stringify(jsonOutput, null, 2);
+      };
+
+      reader.readAsArrayBuffer(input.files[0]);
+    });
+  </script>
+</body>
+</html>
