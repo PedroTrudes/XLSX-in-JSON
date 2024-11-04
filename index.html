@@ -22,9 +22,33 @@
 
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
-        const jsonOutput = XLSX.utils.sheet_to_json(worksheet);
+
+        let jsonOutput = XLSX.utils.sheet_to_json(worksheet);
+      
+      
+        jsonOutput = jsonOutput.map(row => {
+          if( typeof row.repairCost === 'number') {
+            row.repairCost = row.repairCost.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          }
+          return row;
+        })
+        /*
+        let valorTeste = jsonOutput[2].valor;
+        valorTeste = valorTeste.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        console.log(valorTeste) 
+      jsonOutput = jsonOutput.map(row => {
+        if (typeof row.valor === 'number') {
+          // Converte para string no formato de moeda
+          row.valor = row.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        return row;
+      });
+      
+      */
+        
 
         document.getElementById('output-json').textContent = JSON.stringify(jsonOutput, null, 2);
+        console.log(workbook)
       };
 
       reader.readAsArrayBuffer(input.files[0]);
@@ -44,6 +68,8 @@
 
       document.body.removeChild(tempTextArea);
       alert('JSON copiado para a área de transferência!');
+      const arrayInfo = JSON.stringify(tempTextArea.value)
+      console.log(arrayInfo)
     });
   </script>
 </body>
